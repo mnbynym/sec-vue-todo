@@ -53,14 +53,7 @@ Vue を読み込み、「画面のどこを Vue に管理させるか」を決�
 
 ## 動作確認
 
-**ここからはローカルサーバー経由で開いてください。** ダブルクリックで開くと ES モジュールが読み込めずエラーになります。
-
-```
-cd sec-vue-todo
-python -m http.server 8000
-```
-
-→ http://localhost:8000/step2/
+`index.html` をブラウザで開きます(ダブルクリックで構いません)。
 
 - [ ] 見た目が step 1 と変わっていない
 - [ ] 開発者ツールの Console タブにエラーが出ていない
@@ -68,9 +61,12 @@ python -m http.server 8000
 
 ## つまずきやすいところ
 
-- **画面は出るが Console に `Failed to load module script` などのエラー** → `file://` で開いています。ローカルサーバー経由で開き直してください
-- **`Cannot find module 'vue'`** → インポートマップの書き忘れ、または `<script type="importmap">` を `<script type="module">` より後ろに書いています。インポートマップは先に読み込まれる必要があります
+- **`Failed to resolve module specifier "vue"`** → インポートマップの書き忘れ、または `<script type="importmap">` を `<script type="module">` より後ろに書いています。インポートマップは先に読み込まれる必要があります
 - **`Failed to mount app: mount target selector "#app" returned null`** → `mount()` に渡すセレクタと HTML の `id` が一致していません
+- **`net::ERR_...` や読み込みの失敗** → Vue を CDN から取ってくるので、インターネット接続が必要です
+
+なお、このハンズオンは JavaScript を HTML に直接書いているので、ダブルクリック(`file://`)で開いても動きます。
+別ファイル(`app.js` など)に分けたくなったときは、`file://` では読み込めなくなるのでローカルサーバーが必要になります。詳しくはリポジトリのルートの `README.md` を見てください。
 
 ## 解答
 
