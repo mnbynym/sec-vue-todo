@@ -28,45 +28,52 @@
 
 <body>
 
+  <!--
+    step 4: 入力フォームから TODO を追加できるようにする。
+            ただし一覧の描画は step 5 で作るので、この段階では
+              - 下のサンプルの <li> が 1 行出たまま
+              - 「TODO はまだありません」が出たまま
+            になる。追加できているかどうかは、開発者ツールのコンソールに出る
+            console.log の中身で確認する。
+  -->
   <div id="app" class="container" style="max-width: 600px; margin-top: 30px;">
-    
+
     <div class="card border-primary">
       <div class="card-header bg-primary text-white">
         <h3 class="card-title h5 mb-0">TODO リスト</h3>
       </div>
       <div class="card-body">
 
-        <!-- 入力フォーム: v-model で newTodo と双方向バインディング -->
+        <!-- 入力フォーム: step 4 で <form> に置き換えて、入力と追加処理をつなぐ -->
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="やることを入力してください"
-                  v-model="newTodo" @keyup.enter="addTodo">
-          <button class="btn btn-primary" @click="addTodo">追加</button>
+          <input type="text" class="form-control" placeholder="やることを入力してください">
+          <button class="btn btn-primary">追加</button>
         </div>
 
         <hr>
 
-        <!-- リスト表示: v-for で todos を繰り返し描画(:key を忘れずに) -->
+        <!-- リスト表示: step 5 で v-for を使い、この <li> を TODO の数だけ繰り返し描画する -->
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="form-check m-0">
               <input class="form-check-input" type="checkbox" id="todo-check">
               <label class="form-check-label" for="todo-check">
-                <!-- todo の表示 -->
+                サンプルの TODO
               </label>
             </div>
             <button class="btn btn-danger btn-sm">削除</button>
           </li>
         </ul>
 
-        <!-- 条件付きレンダリング: TODO が 1 件もないときだけ表示 -->
+        <!-- 空のときのメッセージ: step 5 で v-if を付け、TODO が 1 件もないときだけ表示する -->
         <p class="text-body-secondary">
           TODO はまだありません。上のフォームから追加してください。
         </p>
 
-        <!-- 算出プロパティで残りの件数を表示 -->
+        <!-- 件数の表示: 最後(完成)で算出プロパティの値を埋め込む -->
         <p>
-          残り <span class="badge text-bg-secondary"></span> 件 /
-          全 <span class="badge text-bg-secondary"></span> 件
+          残り <span class="badge text-bg-secondary">0</span> 件 /
+          全 <span class="badge text-bg-secondary">0</span> 件
         </p>
 
       </div>
@@ -74,10 +81,10 @@
   </div>
 
   <script type="module">
-    
+
     import { createApp, ref, computed } from 'vue'
 
-    const app = createApp({
+    createApp({
       setup() {
 
         // リアクティブ･プロパティ
@@ -85,27 +92,13 @@
         const todos = ref([])
 
         // 追加した TODO に一意な id を振るためのカウンター
+        // (画面に表示しない値なので ref にする必要はない)
         let nextId = 1
 
-        // TODO を追加する
-        function addTodo() {
-          const text = newTodo.value.trim()
-          if (text === '') {
-            return
-          }
-          todos.value.push({
-            id: nextId++,
-            text: text,
-            completed: false
-          })
-          newTodo.value = ''
-          console.log('現在のTODOリスト:', todos.value)
-        }
-
+        // return したものがテンプレートから使えるようになる
         return {
           newTodo,
-          todos,
-          addTodo
+          todos
         }
       }
     }).mount('#app')

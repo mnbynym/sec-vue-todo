@@ -28,15 +28,19 @@
 
 <body>
 
+  <!--
+    step 3: アプリが扱うデータ(状態)を用意する。
+            画面の見た目はまだ step 2 と同じまま。
+  -->
   <div id="app" class="container" style="max-width: 600px; margin-top: 30px;">
-    
+
     <div class="card border-primary">
       <div class="card-header bg-primary text-white">
         <h3 class="card-title h5 mb-0">TODO リスト</h3>
       </div>
       <div class="card-body">
 
-        <!-- 入力フォーム: v-model で newTodo と双方向バインディング -->
+        <!-- 入力フォーム: step 4 で <form> に置き換えて、入力と追加処理をつなぐ -->
         <div class="input-group">
           <input type="text" class="form-control" placeholder="やることを入力してください">
           <button class="btn btn-primary">追加</button>
@@ -44,28 +48,28 @@
 
         <hr>
 
-        <!-- リスト表示: v-for で todos を繰り返し描画(:key を忘れずに) -->
+        <!-- リスト表示: step 5 で v-for を使い、この <li> を TODO の数だけ繰り返し描画する -->
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="form-check m-0">
               <input class="form-check-input" type="checkbox" id="todo-check">
               <label class="form-check-label" for="todo-check">
-                <!-- todo の表示 -->
+                サンプルの TODO
               </label>
             </div>
             <button class="btn btn-danger btn-sm">削除</button>
           </li>
         </ul>
 
-        <!-- 条件付きレンダリング: TODO が 1 件もないときだけ表示 -->
+        <!-- 空のときのメッセージ: step 5 で v-if を付け、TODO が 1 件もないときだけ表示する -->
         <p class="text-body-secondary">
           TODO はまだありません。上のフォームから追加してください。
         </p>
 
-        <!-- 算出プロパティで残りの件数を表示 -->
+        <!-- 件数の表示: 最後(完成)で算出プロパティの値を埋め込む -->
         <p>
-          残り <span class="badge text-bg-secondary"></span> 件 /
-          全 <span class="badge text-bg-secondary"></span> 件
+          残り <span class="badge text-bg-secondary">0</span> 件 /
+          全 <span class="badge text-bg-secondary">0</span> 件
         </p>
 
       </div>
@@ -73,23 +77,13 @@
   </div>
 
   <script type="module">
-    
+
     import { createApp, ref, computed } from 'vue'
 
     createApp({
       setup() {
-
-        // リアクティブ･プロパティ
-        const newTodo = ref('')
-        const todos = ref([])
-
-        // 追加した TODO に一意な id を振るためのカウンター
-        let nextId = 1
-
-        return {
-          newTodo,
-          todos
-        }
+        // step 3 でここにリアクティブ･プロパティを用意する
+        return {}
       }
     }).mount('#app')
 

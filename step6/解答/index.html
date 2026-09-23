@@ -72,7 +72,8 @@
                 {{ todo.text }}
               </label>
             </div>
-            <button class="btn btn-danger btn-sm">削除</button>
+            <!-- イベントハンドラには引数を渡せる。ここではクリックされた todo 自身を渡す -->
+            <button class="btn btn-danger btn-sm" @click="removeTodo(todo)">削除</button>
           </li>
         </ul>
 
@@ -120,11 +121,17 @@
           newTodo.value = ''
         }
 
+        // TODO を削除する(渡された todo 以外を集めた新しい配列に差し替える)
+        function removeTodo(todo) {
+          todos.value = todos.value.filter((t) => t !== todo)
+        }
+
         // return したものがテンプレートから使えるようになる
         return {
           newTodo,
           todos,
-          addTodo
+          addTodo,
+          removeTodo
         }
       }
     }).mount('#app')

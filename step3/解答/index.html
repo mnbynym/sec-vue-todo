@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vue.js TODO step 6</title>
+  <title>Vue.js TODO step 3</title>
 
   <!-- Bootstrap 5 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -29,7 +29,8 @@
 <body>
 
   <!--
-    step 6: 削除ボタンで TODO を取り除けるようにする。
+    step 3: アプリが扱うデータ(状態)を用意する。
+            画面の見た目はまだ step 2 と同じまま。
   -->
   <div id="app" class="container" style="max-width: 600px; margin-top: 30px;">
 
@@ -39,45 +40,29 @@
       </div>
       <div class="card-body">
 
-        <!--
-          入力フォーム:
-            - v-model で入力欄と newTodo を双方向バインディングする
-            - <form> + @submit.prevent なので、ボタンのクリックでも Enter でも追加できる
-        -->
-        <form class="input-group" @submit.prevent="addTodo">
-          <input type="text" class="form-control" placeholder="やることを入力してください"
-                 v-model="newTodo">
-          <button type="submit" class="btn btn-primary">追加</button>
-        </form>
+        <!-- 入力フォーム: step 4 で <form> に置き換えて、入力と追加処理をつなぐ -->
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="やることを入力してください">
+          <button class="btn btn-primary">追加</button>
+        </div>
 
         <hr>
 
-        <!-- リスト表示: v-for で todos を繰り返し描画(:key を忘れずに) -->
+        <!-- リスト表示: step 5 で v-for を使い、この <li> を TODO の数だけ繰り返し描画する -->
         <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between align-items-center"
-              v-for="todo in todos" :key="todo.id">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="form-check m-0">
-              <!--
-                id は文書内で重複してはいけないので、繰り返す要素では
-                :id / :for に todo.id を混ぜて 1 件ごとに違う値にする。
-                固定の id のままだと、2 件目以降のラベルを押したときに
-                1 件目のチェックボックスが反応してしまう。
-              -->
-              <input class="form-check-input" type="checkbox"
-                     :id="'todo-check-' + todo.id"
-                     v-model="todo.completed">
-              <label class="form-check-label" :for="'todo-check-' + todo.id"
-                     :class="{ done: todo.completed }">
-                <!-- todo の表示({{ }} は自動でエスケープされるので HTML は埋め込まれない) -->
-                {{ todo.text }}
+              <input class="form-check-input" type="checkbox" id="todo-check">
+              <label class="form-check-label" for="todo-check">
+                サンプルの TODO
               </label>
             </div>
             <button class="btn btn-danger btn-sm">削除</button>
           </li>
         </ul>
 
-        <!-- 条件付きレンダリング: TODO が 1 件もないときだけ表示 -->
-        <p v-if="todos.length === 0" class="text-body-secondary">
+        <!-- 空のときのメッセージ: step 5 で v-if を付け、TODO が 1 件もないときだけ表示する -->
+        <p class="text-body-secondary">
           TODO はまだありません。上のフォームから追加してください。
         </p>
 
@@ -106,25 +91,10 @@
         // (画面に表示しない値なので ref にする必要はない)
         let nextId = 1
 
-        // TODO を追加する
-        function addTodo() {
-          const text = newTodo.value.trim()
-          if (text === '') {
-            return
-          }
-          todos.value.push({
-            id: nextId++,
-            text: text,
-            completed: false
-          })
-          newTodo.value = ''
-        }
-
         // return したものがテンプレートから使えるようになる
         return {
           newTodo,
-          todos,
-          addTodo
+          todos
         }
       }
     }).mount('#app')

@@ -28,49 +28,54 @@
 
 <body>
 
+  <!--
+    step 5: 追加した TODO を一覧に表示する。
+            チェックボックスで完了/未完了を切り替えられるようにし、
+            1 件もないときだけメッセージを出す。
+  -->
   <div id="app" class="container" style="max-width: 600px; margin-top: 30px;">
-    
+
     <div class="card border-primary">
       <div class="card-header bg-primary text-white">
         <h3 class="card-title h5 mb-0">TODO リスト</h3>
       </div>
       <div class="card-body">
 
-        <!-- 入力フォーム: v-model で newTodo と双方向バインディング -->
-        <div class="input-group">
+        <!--
+          入力フォーム:
+            - v-model で入力欄と newTodo を双方向バインディングする
+            - <form> + @submit.prevent なので、ボタンのクリックでも Enter でも追加できる
+        -->
+        <form class="input-group" @submit.prevent="addTodo">
           <input type="text" class="form-control" placeholder="やることを入力してください"
-                  v-model="newTodo" @keyup.enter="addTodo">
-          <button class="btn btn-primary" @click="addTodo">追加</button>
-        </div>
+                 v-model="newTodo">
+          <button type="submit" class="btn btn-primary">追加</button>
+        </form>
 
         <hr>
 
-        <!-- リスト表示: v-for で todos を繰り返し描画(:key を忘れずに) -->
+        <!-- リスト表示: step 5 で v-for を使い、この <li> を TODO の数だけ繰り返し描画する -->
         <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between align-items-center"
-              v-for="todo in todos" :key="todo.id">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="form-check m-0">
-              <input class="form-check-input" type="checkbox" id="todo-check"
-                     v-model="todo.completed">
-              <label class="form-check-label" for="todo-check"
-                    :class="{ done: todo.completed }">
-                <!-- todo の表示 -->
-                {{ todo.text }}
+              <input class="form-check-input" type="checkbox" id="todo-check">
+              <label class="form-check-label" for="todo-check">
+                サンプルの TODO
               </label>
             </div>
             <button class="btn btn-danger btn-sm">削除</button>
           </li>
         </ul>
 
-        <!-- 条件付きレンダリング: TODO が 1 件もないときだけ表示 -->
-        <p v-if="todos.length === 0" class="text-body-secondary">
+        <!-- 空のときのメッセージ: step 5 で v-if を付け、TODO が 1 件もないときだけ表示する -->
+        <p class="text-body-secondary">
           TODO はまだありません。上のフォームから追加してください。
         </p>
 
-        <!-- 算出プロパティで残りの件数を表示 -->
+        <!-- 件数の表示: 最後(完成)で算出プロパティの値を埋め込む -->
         <p>
-          残り <span class="badge text-bg-secondary"></span> 件 /
-          全 <span class="badge text-bg-secondary"></span> 件
+          残り <span class="badge text-bg-secondary">0</span> 件 /
+          全 <span class="badge text-bg-secondary">0</span> 件
         </p>
 
       </div>
@@ -78,10 +83,10 @@
   </div>
 
   <script type="module">
-    
+
     import { createApp, ref, computed } from 'vue'
 
-    const app = createApp({
+    createApp({
       setup() {
 
         // リアクティブ･プロパティ
@@ -89,6 +94,7 @@
         const todos = ref([])
 
         // 追加した TODO に一意な id を振るためのカウンター
+        // (画面に表示しない値なので ref にする必要はない)
         let nextId = 1
 
         // TODO を追加する
@@ -103,9 +109,12 @@
             completed: false
           })
           newTodo.value = ''
+
+          // 一覧の描画は step 5 で作るので、今はコンソールで中身を確認する
           console.log('現在のTODOリスト:', todos.value)
         }
 
+        // return したものがテンプレートから使えるようになる
         return {
           newTodo,
           todos,

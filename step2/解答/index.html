@@ -15,6 +15,15 @@
       color: #999;
     }
   </style>
+
+  <!-- インポートマップ: "vue" という名前で ES モジュールビルドを読み込めるようにする -->
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -67,6 +76,19 @@
       </div>
     </div>
   </div>
+
+  <script type="module">
+
+    import { createApp, ref, computed } from 'vue'
+
+    createApp({
+      setup() {
+        // step 3 でここにリアクティブ･プロパティを用意する
+        return {}
+      }
+    }).mount('#app')
+
+  </script>
 
 </body>
 </html>
