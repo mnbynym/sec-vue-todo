@@ -14,6 +14,12 @@
       text-decoration: line-through;
       color: #999;
     }
+
+    /* マウントが終わるまで中身を隠す。Vue はマウント後に v-cloak 属性を取り除くので、
+       このスタイルは「Vue が動き出すまでの間」だけ効く */
+    [v-cloak] {
+      display: none;
+    }
   </style>
 
   <!-- インポートマップ: "vue" という名前で ES モジュールビルドを読み込めるようにする -->
@@ -31,7 +37,7 @@
   <!--
     完成: 算出プロパティで「残り何件か」を表示して仕上げる。
   -->
-  <div id="app" class="container" style="max-width: 600px; margin-top: 30px;">
+  <div id="app" v-cloak class="container" style="max-width: 600px; margin-top: 30px;">
 
     <div class="card border-primary">
       <div class="card-header bg-primary text-white">

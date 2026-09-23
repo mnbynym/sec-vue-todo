@@ -13,7 +13,7 @@ Vue 3 (Composition API) を使って、ブラウザだけで動く TODO アプ�
 | step4 | TODO を追加する | `v-model` / `@submit.prevent` / イベント処理 |
 | step5 | 一覧を表示する | `v-for` / `:key` / `:class` / `v-if` |
 | step6 | TODO を削除する | イベントハンドラへの引数渡し |
-| 完成 | 残り件数を表示する | `computed` / `v-else` |
+| 完成 | 残り件数を表示する | `computed` / `v-else` / `v-cloak` |
 
 ## フォルダの構成
 
