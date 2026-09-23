@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vue.js TODO 発展 1</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <style>
+    /* 完了した TODO に適用するスタイル(クラスバインディングで切り替える) */
+    .done {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    /* マウントが終わるまで中身を隠す。Vue はマウント後に v-cloak 属性を取り除くので、
+       このスタイルは「Vue が動き出すまでの間」だけ効く */
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+
+  <!-- インポートマップ: "vue" という名前で ES モジュールビルドを読み込めるようにする -->
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+  <!--
+    発展 1: 完了した TODO をまとめて削除する。
+  -->
+  <div id="app" v-cloak class="container" style="max-width: 600px; margin-top: 30px;">
+
+    <div class="card border-primary">
+      <div class="card-header bg-primary text-white">
+        <h3 class="card-title h5 mb-0">TODO リスト</h3>
+      </div>
+      <div class="card-body">
+
+        <!--
+          入力フォーム:
+            - v-model で入力欄と newTodo を双方向バインディングする
+            - <form> + @submit.prevent なので、ボタンのクリックでも Enter でも追加できる
+        -->
+        <form class="input-group" @submit.prevent="addTodo">
+          <input type="text" class="form-control" placeholder="やることを入力してください"
+                 v-model="newTodo">
+          <button type="submit" class="btn btn-primary">追加</button>
+        </form>
+
+        <hr>
+
+        <!-- リスト表示: v-for で todos を繰り返し描画(:key を忘れずに) -->
+        <ul class="list-group mb-3">
+          <li class="list-group-item d-flex justify-content-between align-items-center"
+              v-for="todo in todos" :key="todo.id">
+            <div class="form-check m-0">
+              <!--
+                id は文書内で重複してはいけないので、繰り返す要素では
+                :id / :for に todo.id を混ぜて 1 件ごとに違う値にする。
+                固定の id のままだと、2 件目以降のラベルを押したときに
+                1 件目のチェックボックスが反応してしまう。
+              -->
+              <input class="form-check-input" type="checkbox"
+                     :id="'todo-check-' + todo.id"
+                     v-model="todo.completed">
+              <label class="form-check-label" :for="'todo-check-' + todo.id"
+                     :class="{ done: todo.completed }">
+                <!-- todo の表示({{ }} は自動でエスケープされるので HTML は埋め込まれない) -->
+                {{ todo.text }}
+              </label>
+            </div>
+            <!-- イベントハンドラには引数を渡せる。ここではクリックされた todo 自身を渡す -->
+            <button class="btn btn-danger btn-sm" @click="removeTodo(todo)">削除</button>
+          </li>
+        </ul>
+
+        <!-- 条件付きレンダリング: TODO が 1 件もないときだけ表示 -->
+        <p v-if="todos.length === 0" class="text-body-secondary">
+          TODO はまだありません。上のフォームから追加してください。
+        </p>
+
+        <!-- 算出プロパティで残りの件数を表示(1 件以上あるときだけ) -->
+        <p v-else>
+          残り <span class="badge text-bg-secondary">{{ remainingCount }}</span> 件 /
+          全 <span class="badge text-bg-secondary">{{ todos.length }}</span> 件
+        </p>
+
+        <!-- 完了した TODO が 1 件以上あるときだけボタンを出す -->
+        <button v-if="completedCount > 0" class="btn btn-outline-secondary btn-sm"
+                @click="clearCompleted">
+          完了した {{ completedCount }} 件を削除
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+
+    import { createApp, ref, computed } from 'vue'
+
+    createApp({
+      setup() {
+
+        // リアクティブ･プロパティ
+        const newTodo = ref('')
+        const todos = ref([])
+
+        // 追加した TODO に一意な id を振るためのカウンター
+        // (画面に表示しない値なので ref にする必要はない)
+        let nextId = 1
+
+        // TODO を追加する
+        function addTodo() {
+          const text = newTodo.value.trim()
+          if (text === '') {
+            return
+          }
+          todos.value.push({
+            id: nextId++,
+            text: text,
+            completed: false
+          })
+          newTodo.value = ''
+        }
+
+        // TODO を削除する(渡された todo 以外を集めた新しい配列に差し替える)
+        function removeTodo(todo) {
+          todos.value = todos.value.filter((t) => t !== todo)
+        }
+
+        // 算出プロパティ: 未完了の TODO の件数
+        // todos が変わったときだけ再計算され、結果はキャッシュされる
+        const remainingCount = computed(() => {
+          return todos.value.filter((t) => !t.completed).length
+        })
+
+        // 算出プロパティ: 完了した TODO の件数
+        const completedCount = computed(() => {
+          return todos.value.filter((t) => t.completed).length
+        })
+
+        // 完了した TODO をまとめて削除する
+        function clearCompleted() {
+          todos.value = todos.value.filter((t) => !t.completed)
+        }
+
+        // return したものがテンプレートから使えるようになる
+        return {
+          newTodo,
+          todos,
+          addTodo,
+          removeTodo,
+          remainingCount,
+          completedCount,
+          clearCompleted
+        }
+      }
+    }).mount('#app')
+
+  </script>
+
+</body>
+</html>
